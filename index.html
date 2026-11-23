@@ -1,0 +1,356 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><title>Feed Ingredient Desk</title><meta name="description" content="Procurement decision desk for poultry feed and wanda raw materials, Punjab"></head><body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky desk header, KPI ribbon, tabbed workspace; ingredient detail opens as a right-hand drawer. */
+:root{
+  --bg:#f2f3ec; --panel:#ffffff; --panel2:#f7f8f2; --ink:#1a2019; --muted:#59634f; --faint:#858f7e; --line:#d9dccf; --line2:#e7e9e0;
+  --accent:#b07307; --accent-ink:#734b00; --accent-bg:#f9eed4;
+  --green:#12704d; --green-bg:#dff0e6; --lime:#3d7d22; --lime-bg:#e9f3df; --blue:#2c5a85; --blue-bg:#e4edf6;
+  --amber:#93600a; --amber-bg:#f8ecd3; --red:#ad271f; --red-bg:#f9e2df; --violet:#55479a; --violet-bg:#ebe8f6;
+  --grid:#e2e5da; --shadow:0 1px 2px rgba(26,32,25,.06),0 6px 24px rgba(26,32,25,.06);
+  --f-body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif; --f-cond:"Barlow Condensed","Barlow",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#10140e; --panel:#171c15; --panel2:#1c2219; --ink:#e6e9de; --muted:#a3ac99; --faint:#7b8573; --line:#2b3227; --line2:#232a20;
+  --accent:#e2a53a; --accent-ink:#f2c879; --accent-bg:#2f2510;
+  --green:#4bbf8b; --green-bg:#14301f; --lime:#90cc6d; --lime-bg:#1c2d14; --blue:#80b2df; --blue-bg:#152538;
+  --amber:#e6b24d; --amber-bg:#33270e; --red:#f17c70; --red-bg:#3a1613; --violet:#b5a8ee; --violet-bg:#231e39;
+  --grid:#283024; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 28px rgba(0,0,0,.35); color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#10140e; --panel:#171c15; --panel2:#1c2219; --ink:#e6e9de; --muted:#a3ac99; --faint:#7b8573; --line:#2b3227; --line2:#232a20;
+  --accent:#e2a53a; --accent-ink:#f2c879; --accent-bg:#2f2510;
+  --green:#4bbf8b; --green-bg:#14301f; --lime:#90cc6d; --lime-bg:#1c2d14; --blue:#80b2df; --blue-bg:#152538;
+  --amber:#e6b24d; --amber-bg:#33270e; --red:#f17c70; --red-bg:#3a1613; --violet:#b5a8ee; --violet-bg:#231e39;
+  --grid:#283024; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 28px rgba(0,0,0,.35); color-scheme:dark }
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;margin:0}
+a{color:var(--blue)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.num,.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:1440px;margin:0 auto}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--panel)}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--panel);border-bottom:1px solid var(--line)}
+.top-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding-block:12px}
+.brand{display:flex;align-items:baseline;gap:12px;min-width:0;flex:1 1 320px}
+.brand h1{font-family:var(--f-cond);font-weight:700;font-size:26px;letter-spacing:.01em;margin:0;line-height:1;text-wrap:balance}
+.brand h1 b{color:var(--accent)}
+.brand .sub{color:var(--muted);font-size:13px}
+.top-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.status{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);padding:5px 10px;border:1px solid var(--line);border-radius:999px;background:var(--panel2)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}
+.dot.live{background:var(--green)}.dot.warn{background:var(--amber)}.dot.off{background:var(--red)}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:7px 12px;cursor:pointer;font-weight:500;font-size:14px;color:var(--ink)}
+.btn:hover{border-color:var(--faint)}
+.btn.primary{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.btn.accent{background:var(--accent);color:#fff;border-color:var(--accent)}
+:root[data-theme="dark"] .btn.accent{color:#1a1406}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.accent{color:#1a1406}}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.btn.sm{padding:4px 9px;font-size:13px}
+nav.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{background:none;border:0;border-bottom:3px solid transparent;padding:9px 14px 8px;font-family:var(--f-cond);font-size:17px;font-weight:600;letter-spacing:.02em;color:var(--muted);cursor:pointer;white-space:nowrap}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+main{padding-block:18px 48px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:10px;margin-bottom:18px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0}
+.kpi .k{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.kpi .v{font-family:var(--f-mono);font-size:20px;font-weight:500;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi .d{font-size:12.5px;color:var(--muted);margin-top:2px}
+.kpi svg{display:block;margin-top:4px}
+.up{color:var(--red)}.down{color:var(--green)}.flat{color:var(--muted)}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:6px 0 10px}
+.sec-h h2{font-family:var(--f-cond);font-size:22px;font-weight:700;margin:0;letter-spacing:.01em;text-wrap:balance}
+.sec-h .hint{color:var(--muted);font-size:13px}
+.calls{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px;margin-bottom:22px}
+.call{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer;display:flex;flex-direction:column;gap:6px;min-width:0;text-align:left}
+.call:hover{border-color:var(--faint);box-shadow:var(--shadow)}
+.call .t{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.call .n{font-weight:600;font-size:15.5px}
+.call .a{font-size:14px}
+.call .c{font-size:12.5px;color:var(--muted)}
+.pill{display:inline-flex;align-items:center;gap:5px;font-family:var(--f-cond);font-weight:600;font-size:13px;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:5px;border:1px solid transparent;white-space:nowrap;line-height:1.35}
+.s-buy{background:var(--green);color:#fff}
+:root[data-theme="dark"] .s-buy{color:#062014}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .s-buy{color:#062014}}
+.s-acc{background:var(--lime-bg);color:var(--lime);border-color:color-mix(in srgb,var(--lime) 35%,transparent)}
+.s-hold{background:var(--blue-bg);color:var(--blue);border-color:color-mix(in srgb,var(--blue) 30%,transparent)}
+.s-hand{background:var(--amber-bg);color:var(--amber);border-color:color-mix(in srgb,var(--amber) 30%,transparent)}
+.s-wait{background:var(--amber);color:#fff}
+:root[data-theme="dark"] .s-wait{color:#231803}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .s-wait{color:#231803}}
+.s-quote{background:var(--violet-bg);color:var(--violet);border-color:color-mix(in srgb,var(--violet) 30%,transparent)}
+.s-out{background:var(--red);color:#fff}
+:root[data-theme="dark"] .s-out{color:#2a0806}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .s-out{color:#2a0806}}
+.tag{display:inline-block;font-size:11.5px;padding:1px 6px;border-radius:4px;background:var(--panel2);border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.tag.src-mandi,.tag.src-market{background:var(--green-bg);color:var(--green);border-color:transparent}
+.tag.src-quote{background:var(--blue-bg);color:var(--blue);border-color:transparent}
+.tag.src-est{background:var(--amber-bg);color:var(--amber);border-color:transparent}
+.tag.flag-high{background:var(--red-bg);color:var(--red);border-color:transparent}
+.tag.flag-med{background:var(--amber-bg);color:var(--amber);border-color:transparent}
+.tag.warn{background:var(--amber-bg);color:var(--amber);border-color:transparent}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.filters input[type=search]{flex:1 1 220px;min-width:0;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+.filters select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel)}
+.seg button{border:0;background:none;padding:7px 11px;cursor:pointer;font-size:13.5px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line2);vertical-align:top}
+th{font-family:var(--f-cond);font-weight:600;font-size:13px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:var(--panel2);position:sticky;top:0;z-index:1;white-space:nowrap}
+td.r,th.r{text-align:right}
+tbody tr.row{cursor:pointer}
+tbody tr.row:hover td{background:var(--panel2)}
+.board td{font-size:14px}
+.board .ing{font-weight:600}
+.board .erp{font-size:12px;color:var(--muted)}
+.board .why{color:var(--muted);font-size:13px;max-width:430px;min-width:260px}
+.cat-row td{background:var(--panel2);font-family:var(--f-cond);font-weight:700;font-size:15px;letter-spacing:.03em;color:var(--ink);padding-top:10px}
+.muted{color:var(--muted)}.small{font-size:12.5px}.tiny{font-size:11.5px}
+.empty{padding:18px;color:var(--muted);text-align:center}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+.pad{padding:14px 16px}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.03em;text-transform:uppercase}
+.field input,.field select,.field textarea{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);min-width:0;width:100%}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.form .wide{grid-column:1/-1}
+.formbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.note{font-size:13px;color:var(--muted)}
+.ok{color:var(--green)}.err{color:var(--red)}
+.intel{display:flex;flex-direction:column;gap:10px}
+.intel-item{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;grid-template-columns:96px 1fr;gap:4px 14px}
+.intel-item .dt{font-family:var(--f-mono);font-size:12.5px;color:var(--muted);padding-top:2px}
+.intel-item h3{font-size:16px;margin:0 0 4px;font-weight:600;text-wrap:balance}
+.intel-item p{margin:0 0 6px;font-size:14px}
+.intel-item .meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px}
+@media (max-width:560px){.intel-item{grid-template-columns:1fr}}
+.imp-risk{background:var(--red-bg);color:var(--red)}.imp-bullish{background:var(--amber-bg);color:var(--amber)}.imp-bearish{background:var(--green-bg);color:var(--green)}.imp-mixed,.imp-neutral{background:var(--blue-bg);color:var(--blue)}
+.drawer-back{position:fixed;inset:0;background:rgba(10,14,9,.42);z-index:40}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(640px,100%);background:var(--bg);z-index:41;overflow-y:auto;box-shadow:var(--shadow);border-left:1px solid var(--line);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.dr-head{position:sticky;top:0;background:var(--panel);border-bottom:1px solid var(--line);padding:12px 16px;display:flex;gap:12px;align-items:flex-start;z-index:2}
+.dr-head h2{font-family:var(--f-cond);font-size:24px;margin:0;line-height:1.05;text-wrap:balance}
+.dr-body{padding:14px 16px;display:flex;flex-direction:column;gap:14px}
+.dr-sec{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.dr-sec h3{font-family:var(--f-cond);font-size:16px;letter-spacing:.04em;text-transform:uppercase;margin:0 0 8px;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
+.stat .k{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.stat .v{font-family:var(--f-mono);font-size:17px}
+.chart{width:100%;height:auto;display:block}
+.chart text{font-family:var(--f-mono);font-size:10.5px;fill:var(--muted)}
+.chart .gl{stroke:var(--grid);stroke-width:1}
+.chart-wrap{position:relative}
+.tip{position:absolute;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:12px;box-shadow:var(--shadow);white-space:nowrap;z-index:3}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12.5px;color:var(--muted);margin-top:4px}
+.legend i{display:inline-block;width:12px;height:3px;border-radius:2px;margin-right:5px;vertical-align:middle}
+.bar{height:8px;border-radius:4px;background:var(--line2);position:relative;min-width:80px}
+.bar span{position:absolute;inset:0 auto 0 0;border-radius:4px;background:var(--accent)}
+.out{font-family:var(--f-mono);font-size:22px}
+.kv{display:grid;grid-template-columns:1fr auto;gap:4px 16px;font-size:14px}
+.kv div:nth-child(even){text-align:right;font-family:var(--f-mono)}
+.banner{border:1px solid var(--line);background:var(--accent-bg);color:var(--accent-ink);border-radius:10px;padding:10px 14px;font-size:14px;margin-bottom:14px}
+.brief{white-space:pre-wrap;font-size:14.5px;line-height:1.55}
+.method p,.method li{max-width:76ch}
+.method h3{font-family:var(--f-cond);font-size:19px;margin:18px 0 6px}
+.hide-sm{}
+@media (max-width:820px){.hide-sm{display:none}}
+@media (max-width:560px){.brand{flex-direction:column;gap:2px;flex-basis:100%}.brand h1{font-size:22px}.top-row{gap:8px;padding-block:10px}.top-actions{width:100%}.top-actions .btn{flex:1 1 auto;justify-content:center}.status{flex-basis:100%}.kpi .v{font-size:18px}}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="top">
+  <div class="wrap top-row">
+    <div class="brand">
+      <h1>Feed Ingredient <b>Desk</b></h1>
+      <span class="sub">Poultry feed and wanda raw materials · Punjab, PKR</span>
+    </div>
+    <div class="top-actions">
+      <span class="status" id="status"><span class="dot" id="statusDot"></span><span id="statusText">Loading desk data…</span></span>
+      <button class="btn" id="btnRefresh" hidden title="Run the market refresh now">Refresh market data</button>
+      <button class="btn accent" id="btnBrief" hidden>Draft today's buy plan</button>
+    </div>
+  </div>
+  <div class="wrap">
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button role="tab" data-tab="board" aria-selected="true">Action board</button>
+      <button role="tab" data-tab="value" aria-selected="false">Nutrient value</button>
+      <button role="tab" data-tab="import" aria-selected="false">Import parity</button>
+      <button role="tab" data-tab="intel" aria-selected="false">Market intel</button>
+      <button role="tab" data-tab="desk" aria-selected="false">Quotes &amp; decisions</button>
+      <button role="tab" data-tab="method" aria-selected="false">Method &amp; sources</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="banner"></div>
+  <section class="kpis" id="kpis" aria-label="Market indicators"></section>
+
+  <section id="tab-board" data-panel="board">
+    <div class="sec-h"><h2>Today's calls</h2><span class="hint" id="callsHint"></span></div>
+    <div class="calls" id="calls"></div>
+    <div class="sec-h"><h2>All ingredients</h2><span class="hint" id="boardCount"></span></div>
+    <div class="filters">
+      <input type="search" id="fQ" placeholder="Search ERP name or material" aria-label="Search ingredients">
+      <select id="fCat" aria-label="Group"><option value="">All groups</option></select>
+      <div class="seg" id="fUse" role="group" aria-label="Use">
+        <button data-use="" aria-pressed="true">All</button><button data-use="P" aria-pressed="false">Poultry</button><button data-use="W" aria-pressed="false">Wanda</button>
+      </div>
+      <select id="fStance" aria-label="Signal"><option value="">All signals</option></select>
+    </div>
+    <div class="card scroll"><table class="board" id="boardTable"><thead><tr>
+      <th>Signal</th><th>Ingredient</th><th class="r">Price Rs/kg</th><th class="r hide-sm">30-day</th><th class="hide-sm">Value check</th><th>Cover</th><th class="hide-sm">Why</th>
+    </tr></thead><tbody id="boardBody"><tr><td colspan="7" class="empty">Loading the desk views…</td></tr></tbody></table></div>
+  </section>
+
+  <section id="tab-value" data-panel="value" hidden>
+    <div class="sec-h"><h2>What each ingredient is worth today</h2><span class="hint">Energy and protein valued at today's maize and soybean meal prices</span></div>
+    <div class="card pad" style="margin-bottom:14px">
+      <div class="form">
+        <div class="field"><label for="vMaize">Maize, Rs/kg</label><input id="vMaize" type="number" step="0.1" inputmode="decimal"><span class="tiny muted" id="vMaizeSrc"></span></div>
+        <div class="field"><label for="vSbm">Soybean meal 48%, Rs/kg</label><input id="vSbm" type="number" step="0.1" inputmode="decimal"><span class="tiny muted" id="vSbmSrc"></span></div>
+        <div class="field"><label for="vAdd">Delivery add-on, Rs/kg</label><input id="vAdd" type="number" step="0.1" value="0" inputmode="decimal"><span class="tiny muted">Added to both reference prices</span></div>
+      </div>
+      <p class="note" style="margin:10px 0 0">A supplier offer below the value price is cheap for the energy and protein it brings; above it, the same nutrients cost less as maize and soybean meal. Use it as a first screen before least-cost formulation, which also weighs amino acids, fibre and inclusion limits.</p>
+    </div>
+    <div class="card scroll"><table id="valueTable"><thead><tr>
+      <th>Ingredient</th><th class="r">CP %</th><th class="r">AMEn kcal/kg</th><th class="r">Value Rs/kg</th><th class="r">Latest offer</th><th>Verdict</th><th class="r hide-sm">Rs per kg CP</th><th class="r hide-sm">Rs per 1,000 kcal</th><th class="hide-sm">Matrix</th>
+    </tr></thead><tbody id="valueBody"></tbody></table></div>
+  </section>
+
+  <section id="tab-import" data-panel="import" hidden>
+    <div class="sec-h"><h2>Import parity</h2><span class="hint">Landed cost at Karachi against the best local offer</span></div>
+    <div class="grid2">
+      <div class="card pad">
+        <div class="form">
+          <div class="field wide"><label for="pPreset">Item</label><select id="pPreset"></select></div>
+          <div class="field"><label for="pCfr">CFR Karachi, US$/MT</label><input id="pCfr" type="number" step="1" inputmode="decimal"></div>
+          <div class="field"><label for="pIns">Insurance, % of CFR</label><input id="pIns" type="number" step="0.1" value="0.5"></div>
+          <div class="field"><label for="pFx">US$ to Rs</label><input id="pFx" type="number" step="0.01"></div>
+          <div class="field"><label for="pCd">Customs duty %</label><input id="pCd" type="number" step="0.5"></div>
+          <div class="field"><label for="pAcd">Additional duty %</label><input id="pAcd" type="number" step="0.5"></div>
+          <div class="field"><label for="pRd">Regulatory duty %</label><input id="pRd" type="number" step="0.5"></div>
+          <div class="field"><label for="pSt">Sales tax %</label><input id="pSt" type="number" step="0.5"></div>
+          <div class="field"><label for="pIt">Income tax at import %</label><input id="pIt" type="number" step="0.5"></div>
+          <div class="field"><label for="pPort">Port, clearing, inland Rs/MT</label><input id="pPort" type="number" step="100" value="6000"></div>
+          <div class="field"><label for="pDays">Days from payment to use</label><input id="pDays" type="number" step="1" value="45"></div>
+          <div class="field"><label for="pRate">Cost of funds % a year</label><input id="pRate" type="number" step="0.5" value="15"></div>
+        </div>
+        <p class="note" id="pNote" style="margin:10px 0 0"></p>
+      </div>
+      <div class="card pad">
+        <div class="kv" id="pOut"></div>
+        <div style="margin-top:12px" id="pVerdict"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-intel" data-panel="intel" hidden>
+    <div class="sec-h"><h2>Market intel</h2><span class="hint" id="intelCount"></span></div>
+    <div class="filters">
+      <div class="seg" id="iImp" role="group" aria-label="Impact">
+        <button data-imp="" aria-pressed="true">All</button><button data-imp="risk" aria-pressed="false">Supply risk</button><button data-imp="bullish" aria-pressed="false">Price up</button><button data-imp="bearish" aria-pressed="false">Price down</button><button data-imp="mixed" aria-pressed="false">Mixed</button>
+      </div>
+      <select id="iIng" aria-label="Ingredient"><option value="">All ingredients</option></select>
+    </div>
+    <div class="intel" id="intelList"></div>
+    <details class="card pad" style="margin-top:14px" id="intelAddBox">
+      <summary style="cursor:pointer;font-weight:600">Add a market note</summary>
+      <form id="intelForm" class="form" style="margin-top:10px" autocomplete="off">
+        <div class="field"><label for="inDate">Date</label><input id="inDate" type="date" required></div>
+        <div class="field"><label for="inImpact">Impact</label><select id="inImpact"><option value="risk">Supply risk</option><option value="bullish">Price up</option><option value="bearish">Price down</option><option value="mixed">Mixed</option><option value="neutral">Neutral</option></select></div>
+        <div class="field"><label for="inTag">Ingredient</label><select id="inTag"></select></div>
+        <div class="field wide"><label for="inTitle">Headline</label><input id="inTitle" required maxlength="200"></div>
+        <div class="field wide"><label for="inSummary">What happened and why it matters</label><textarea id="inSummary" rows="3" maxlength="1200"></textarea></div>
+        <div class="field wide"><label for="inUrl">Source link</label><input id="inUrl" type="url" placeholder="https://"></div>
+        <div class="formbar wide"><button class="btn primary" type="submit">Save note</button><span class="note" id="intelMsg"></span></div>
+      </form>
+    </details>
+  </section>
+
+  <section id="tab-desk" data-panel="desk" hidden>
+    <div class="grid2">
+      <div class="card pad">
+        <div class="sec-h" style="margin-top:0"><h2>Log a supplier quote</h2></div>
+        <form id="quoteForm" class="form" autocomplete="off">
+          <div class="field wide"><label for="qIng">Ingredient</label><select id="qIng" required></select></div>
+          <div class="field"><label for="qPrice">Price</label><input id="qPrice" type="number" step="0.01" min="0" required inputmode="decimal"></div>
+          <div class="field"><label for="qUnit">Unit</label><select id="qUnit">
+            <option value="kg">Rs per kg</option><option value="40kg">Rs per 40 kg</option><option value="50kg">Rs per 50 kg bag</option><option value="100kg">Rs per 100 kg</option><option value="mt">Rs per MT</option><option value="usdmt">US$ per MT</option><option value="usdkg">US$ per kg</option></select></div>
+          <div class="field"><label for="qSupplier">Supplier</label><input id="qSupplier" maxlength="120" required></div>
+          <div class="field"><label for="qBasis">Basis</label><select id="qBasis"><option>Delivered Okara</option><option>Delivered Lahore</option><option>Ex-mill / ex-works</option><option>Ex-Karachi port</option><option>Mandi</option></select></div>
+          <div class="field"><label for="qTerms">Terms</label><select id="qTerms"><option>Cash / advance</option><option>Cash on delivery</option><option>Credit 15 days</option><option>Credit 30 days</option><option>Credit 45+ days</option></select></div>
+          <div class="field"><label for="qValid">Valid till</label><input id="qValid" type="date"></div>
+          <div class="field wide"><label for="qNote">Quality and notes</label><input id="qNote" maxlength="300" placeholder="Moisture, protein, aflatoxin, FFA, brand"></div>
+          <div class="formbar wide"><button class="btn primary" type="submit">Save quote</button><span class="note" id="qConv"></span><span class="note" id="qMsg"></span></div>
+        </form>
+      </div>
+      <div class="card pad">
+        <div class="sec-h" style="margin-top:0"><h2>Log a decision</h2></div>
+        <form id="decForm" class="form" autocomplete="off">
+          <div class="field wide"><label for="dIng">Ingredient</label><select id="dIng" required></select></div>
+          <div class="field"><label for="dAction">Decision</label><select id="dAction"><option>Bought</option><option>Contracted forward</option><option>Deferred</option><option>Rejected offer</option><option>Switched to substitute</option></select></div>
+          <div class="field"><label for="dQty">Quantity, MT</label><input id="dQty" type="number" step="0.1" min="0" inputmode="decimal"></div>
+          <div class="field"><label for="dPrice">Price, Rs/kg</label><input id="dPrice" type="number" step="0.01" min="0" inputmode="decimal"></div>
+          <div class="field"><label for="dSupplier">Supplier</label><input id="dSupplier" maxlength="120"></div>
+          <div class="field wide"><label for="dNote">Reason</label><input id="dNote" maxlength="300"></div>
+          <div class="formbar wide"><button class="btn primary" type="submit">Save decision</button><span class="note" id="dMsg"></span></div>
+        </form>
+      </div>
+    </div>
+    <div class="sec-h" style="margin-top:20px"><h2>Recent quotes</h2><span class="hint"><button class="btn sm" id="expQuotes" hidden>Export CSV</button></span></div>
+    <div class="card scroll"><table><thead><tr><th>Date</th><th>Ingredient</th><th>Supplier</th><th class="r">Rs/kg</th><th class="hide-sm">As quoted</th><th class="hide-sm">Basis / terms</th><th class="hide-sm">Notes</th><th>By</th><th></th></tr></thead><tbody id="quoteBody"></tbody></table></div>
+    <div class="sec-h" style="margin-top:20px"><h2>Decision log</h2><span class="hint"><button class="btn sm" id="expDec" hidden>Export CSV</button></span></div>
+    <div class="card scroll"><table><thead><tr><th>Date</th><th>Ingredient</th><th>Decision</th><th class="r">MT</th><th class="r">Rs/kg</th><th class="r hide-sm">Market now</th><th class="r hide-sm">Gain / (loss)</th><th class="hide-sm">Reason</th><th>By</th></tr></thead><tbody id="decBody"></tbody></table></div>
+  </section>
+
+  <section id="tab-method" data-panel="method" hidden class="method">
+    <div class="sec-h"><h2>How the desk works</h2></div>
+    <div class="card pad">
+      <h3>Signals</h3>
+      <ul>
+        <li><b>Phase out</b>: a compliance or residue risk outweighs price; stop new orders.</li>
+        <li><b>Buy / lock</b>: price or supply conditions favour fixing volume and price now for the stated period.</li>
+        <li><b>Accumulate</b>: add cover in tranches up to the stated days.</li>
+        <li><b>Wait</b>: a known event (harvest, crush start, policy decision) is likely to bring better terms.</li>
+        <li><b>Hand-to-mouth</b>: prices are soft or slipping; buy only the current run.</li>
+        <li><b>Hold cover</b>: no edge either way; keep normal stock.</li>
+        <li><b>Get quotes</b>: no reliable price yet; the desk needs supplier quotes before calling it.</li>
+      </ul>
+      <p>Each signal is a desk view with its reasons, sources and date. The daily refresh re-reads the market and rewrites views that no one on the team has locked. A view changed by a team member stays locked until they release it. The board also checks every view against the data: it flags a view when the price has moved more than 5% in 30 days against it, when an offer is dear for its nutrients, or when the price is more than 21 days old.</p>
+      <h3>Nutrient value</h3>
+      <p>Each ingredient is priced as the mix of maize and 48% soybean meal that supplies the same poultry AMEn and crude protein (Petersen's method). At maize Rs65 and soybean meal Rs135 a kg, canola meal is worth about Rs107 a kg, rice polish about Rs63 and 60% corn gluten about Rs181. The table covers poultry ingredients; wanda-only materials need a ruminant energy basis. Values from NRC (1994) are marked NRC; trade averages are marked EST and should be replaced with your laboratory or NIR results.</p>
+      <h3>Import parity</h3>
+      <p>Landed cost adds insurance, customs, additional and regulatory duty, sales tax, income tax at import, port and inland costs, and the finance cost of the days the cash is tied up. Duty rates for soybeans, soybean meal and oilseeds come from USDA GAIN report PK2026-0004 (April 2026); confirm every rate with your clearing agent before contracting. Sales tax and income tax collected at import are shown separately because a registered manufacturer can usually adjust them.</p>
+      <h3>ERP names</h3>
+      <p>Where an ERP name carries another material in brackets, such as Millet HP (Molasses), the desk prices the material in brackets: molasses, palm kernel cake, urea and rapeseed meal. Gatawa could not be identified and is held for confirmation.</p>
+      <h3>Sources and refresh</h3>
+      <div class="scroll"><table id="srcTable"><thead><tr><th>Data</th><th>Source</th><th>Cadence</th></tr></thead><tbody>
+        <tr><td>Maize mandi prices (belt and other mandis)</td><td><a href="http://www.amis.pk/ViewPrices.aspx?searchType=0&amp;commodityId=17" target="_blank" rel="noopener">AMIS Punjab</a>, via <a href="https://kissancares.com/maize-rate-today" target="_blank" rel="noopener">Kissan Cares</a> on refresh</td><td>Daily</td></tr>
+        <tr><td>Wheat, rice, millet, sorghum, cottonseed cake, canola seed</td><td><a href="http://www.amis.pk/" target="_blank" rel="noopener">AMIS Punjab</a></td><td>Daily</td></tr>
+        <tr><td>CBOT soybean meal, soybeans, corn, wheat, soybean oil</td><td><a href="https://farmbucks.com/futures/grain-oilseeds/soybean-meal" target="_blank" rel="noopener">Farmbucks</a>, USDA AMS, ADM Investor Services</td><td>Daily</td></tr>
+        <tr><td>USD/PKR</td><td>State Bank of Pakistan via press</td><td>Daily</td></tr>
+        <tr><td>Urea and DAP</td><td>Pakistan Bureau of Statistics weekly prices</td><td>Weekly</td></tr>
+        <tr><td>Amino acid and vitamin direction</td><td><a href="https://www.foodagribusiness.world/feed/" target="_blank" rel="noopener">Food &amp; Agribusiness</a> market analysis</td><td>Weekly</td></tr>
+        <tr><td>Policy and supply (GMO licences, duties, crush)</td><td>USDA GAIN, NBC news, trade press</td><td>As published</td></tr>
+        <tr><td>Supplier quotes and decisions</td><td>Your team, through this desk</td><td>As entered</td></tr>
+      </tbody></table></div>
+      <p id="schedNote"></p>
+    </div>
+  </section>
+</main>
+
+<div id="drawerHost"></div>
+<div id="briefHost"></div>
+
+<script src="js/master.js"></script>
+<script src="js/app.js"></script>
+
+</body></html>
